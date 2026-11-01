@@ -1,0 +1,1 @@
+GyroConfigs/JoyCon_Individual_Hybrid.txt

@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스위치 1 조이콘 마우스 - 버튼 커스텀 GUI (공식 사양 매칭 버전)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0f172a;
+      --foreground: #f8fafc;
+      --card: #1e293b;
+      --card-foreground: #f8fafc;
+      --primary: #38bdf8;
+      --primary-foreground: #0f172a;
+      --secondary: #334155;
+      --secondary-foreground: #f1f5f9;
+      --muted: #1e293b;
+      --muted-foreground: #94a3b8;
+      --border: #334155;
+    }
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: "Malgun Gothic", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+
+    /* Realistic Joy-Con (L)/(R) CSS matched to Nintendo official specs */
+    .controller-wrap {
+      display: flex;
+      gap: 26px;
+      position: relative;
+      padding-top: 18px;
+      justify-content: center;
+      user-select: none;
+    }
+    .joycon-unit {
+      position: relative;
+      width: 96px;
+    }
+    .zr-zl-trigger {
+      position: absolute;
+      top: -13px;
+      width: 42px;
+      height: 14px;
+      background: #17191b;
+      border: 1px solid #0f1113;
+      color: #cbd5e1;
+      font-size: 9px;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1;
+      transition: all 0.15s ease;
+    }
+    .left-unit .zr-zl-trigger {
+      left: 12px;
+      border-radius: 9px 5px 0 0;
+    }
+    .right-unit .zr-zl-trigger {
+      right: 12px;
+      border-radius: 5px 9px 0 0;
+    }
+    .shoulder {
+      position: absolute;
+      top: -4px;
+      width: 58px;
+      height: 17px;
+      background: #25282b;
+      border: 1px solid #141618;
+      color: #e2e8f0;
+      font-size: 9px;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 1px;
+      cursor: pointer;
+      z-index: 2;
+      transition: all 0.15s ease;
+    }
+    .left-unit .shoulder {
+      left: 4px;
+      border-radius: 24px 8px 0 0;
+    }
+    .right-unit .shoulder {
+      right: 4px;
+      border-radius: 8px 24px 0 0;
+    }
+    .joycon {
+      position: relative;
+      width: 96px;
+      height: 282px;
+      background: #55595d;
+      border: 1.5px solid #202326;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.15), inset 0 -3px 6px rgba(0, 0, 0, 0.28);
+      z-index: 3;
+    }
+    .joycon.left {
+      border-radius: 34px 8px 8px 34px;
+    }
+    .joycon.right {
+      border-radius: 8px 34px 34px 8px;
+    }
+    .rail-bar {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      width: 9px;
+      background: #17191b;
+      border: 1px solid #0f1113;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+    }
+    .joycon.left .rail-bar {
+      right: -8px;
+      border-radius: 0 4px 4px 0;
+    }
+    .joycon.right .rail-bar {
+      left: -8px;
+      border-radius: 4px 0 0 4px;
+    }
+    .rail-btn {
+      width: 7px;
+      height: 26px;
+      background: #2b2f33;
+      border: 1px solid #111315;
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+    .joycon.left .rail-btn {
+      right: -3px;
+    }
+    .joycon.right .rail-btn {
+      left: -3px;
+    }
+    .rail-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .player-leds {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5px;
+    }
+    .player-leds i {
+      display: block;
+      width: 3px;
+      height: 3px;
+      background: #64748b;
+      border-radius: 1px;
+    }
+    .player-leds i.on {
+      background: #4ade80;
+      box-shadow: 0 0 4px #4ade80;
+    }
+    .sync-btn {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #25282b;
+      border: 1px solid #090a0b;
+      margin-top: 2px;
+    }
+    .minus {
+      position: absolute;
+      top: 25px;
+      right: 13px;
+      width: 14px;
+      height: 5px;
+      background: #202326;
+      border: 1px solid #101214;
+      border-radius: 1.5px;
+      cursor: pointer;
+      z-index: 4;
+      transition: all 0.15s ease;
+    }
+    .plus {
+      position: absolute;
+      top: 20px;
+      left: 13px;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      z-index: 4;
+      transition: all 0.15s ease;
+    }
+    .plus::before,
+    .plus::after {
+      content: "";
+      position: absolute;
+      background: #202326;
+      border: 1px solid #101214;
+      border-radius: 1.5px;
+    }
+    .plus::before {
+      top: 4.5px;
+      left: 0;
+      width: 14px;
+      height: 5px;
+    }
+    .plus::after {
+      top: 0;
+      left: 4.5px;
+      width: 5px;
+      height: 14px;
+    }
+    .stick {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2b2e31, #17191b 75%);
+      border: 3px solid #202326;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45), 0 0 0 2px #393c3f;
+      z-index: 4;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 9px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .stick::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 1px solid #383b3e;
+      pointer-events: none;
+    }
+    .joycon.left .stick {
+      top: 54px;
+      left: 23px;
+    }
+    .joycon.right .stick {
+      top: 138px;
+      left: 23px;
+    }
+    .dpad {
+      position: absolute;
+      top: 130px;
+      left: 16px;
+      width: 56px;
+      height: 56px;
+      z-index: 4;
+    }
+    .abxy {
+      position: absolute;
+      top: 46px;
+      left: 16px;
+      width: 56px;
+      height: 56px;
+      z-index: 4;
+    }
+    .dpad .btn-circle,
+    .abxy .btn-circle {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #202326;
+      border: 1px solid #101214;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+      color: #e2e8f0;
+      font-size: 8.5px;
+      font-weight: 800;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .dpad .up, .abxy .x { top: 0; left: 19px; }
+    .dpad .down, .abxy .b { bottom: 0; left: 19px; }
+    .dpad .left-key, .abxy .y { top: 19px; left: 0; }
+    .dpad .right-key, .abxy .a { top: 19px; right: 0; }
+    .capture {
+      position: absolute;
+      top: 208px;
+      right: 16px;
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+      background: #202326;
+      border: 1px solid #101214;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 4;
+      transition: all 0.15s ease;
+    }
+    .capture::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #17191b;
+      border: 1px solid #2d3135;
+    }
+    .home {
+      position: absolute;
+      top: 206px;
+      left: 15px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #202326;
+      border: 2px solid #8c9196;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 4;
+      transition: all 0.15s ease;
+    }
+    .home::after {
+      content: "⌂";
+      color: #cbd5e1;
+      font-size: 10px;
+      line-height: 1;
+      margin-top: -1px;
+    }
+    .jc-btn:hover,
+    .jc-btn.active {
+      background: #e60012 !important;
+      border-color: #ffffff !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.45), 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+      transform: scale(1.12);
+      z-index: 10 !important;
+    }
+    .plus.jc-btn:hover,
+    .plus.jc-btn.active {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .plus.jc-btn:hover::before,
+    .plus.jc-btn:hover::after,
+    .plus.jc-btn.active::before,
+    .plus.jc-btn.active::after {
+      background: #e60012 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 6px rgba(230, 0, 18, 0.6);
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased p-3 md:p-5">
+  <div class="max-w-5xl mx-auto bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-xl shadow-lg overflow-hidden">
+    <!-- Top Header -->
+    <div class="bg-[var(--secondary)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h1 class="text-[var(--foreground)] font-bold text-base md:text-lg flex items-center gap-2">
+          <span>🎮 스위치 1 조이콘 마우스 - 버튼 커스텀 GUI (공식 사양 매칭)</span>
+        </h1>
+        <p class="text-[var(--muted-foreground)] text-xs mt-0.5">
+          닌텐도 공식 사양(L/R) 컨트롤러의 물리 버튼을 클릭해 매핑을 수정하고 <code>.txt</code> 설정 파일로 바로 저장할 수 있습니다.
+        </p>
+      </div>
+      <div class="flex items-center flex-wrap gap-1.5">
+        <input id="fileInputFallback" type="file" accept=".txt" class="hidden" />
+        <button id="btnOpenFile" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
+          📂 설정 파일 열기 (.txt)
+        </button>
+        <button id="btnReset" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
+          ↺ 기본값 초기화
+        </button>
+        <button id="btnCopyConfig" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
+          📋 코드 복사
+        </button>
+        <button id="btnSaveFile" class="px-3.5 py-1.5 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-bold hover:opacity-90 transition shadow">
+          💾 설정 파일 저장 (.txt)
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-[var(--border)]">
+      <!-- Left Column: Official Spec Matched Dual Joy-Con Diagram -->
+      <div class="md:col-span-5 p-4 flex flex-col items-center justify-between bg-[var(--background)]">
+        <div class="w-full flex items-center justify-between mb-1">
+          <span class="text-xs font-semibold text-[var(--muted-foreground)]">Joy-Con (L) / (R) 공식 사양 버튼 선택</span>
+          <span class="text-xs font-mono text-[var(--primary)]" id="activeCodeBadge">선택 코드: ZR</span>
+        </div>
+
+        <!-- Dual Joy-Con Realistic CSS Illustration -->
+        <div class="controller-wrap my-2" id="joyconVisualContainer">
+          <!-- LEFT JOYCON (Joy-Con L) -->
+          <div class="joycon-unit left-unit">
+            <div class="zr-zl-trigger jc-btn" data-k="ZL" title="ZL 버튼 (ZL)">ZL</div>
+            <div class="shoulder jc-btn" data-k="L" title="L 버튼 (L)">L</div>
+
+            <div class="joycon left">
+              <div class="rail-bar">
+                <div class="rail-btn jc-btn" data-k="LSL" title="좌측 SL 버튼 (LSL: 정밀+자이로)"></div>
+                <div class="rail-center">
+                  <div class="player-leds" title="플레이어 LED"><i class="on"></i><i></i><i></i><i></i></div>
+                  <div class="sync-btn" title="SYNC 버튼"></div>
+                </div>
+                <div class="rail-btn jc-btn" data-k="LSR" title="좌측 SR 버튼 (LSR: 단독 탭/조합키)"></div>
+              </div>
+
+              <div class="minus jc-btn" data-k="-" title="- 버튼 (-)"></div>
+              <div class="stick jc-btn" data-k="L3" title="L 스틱 / 누르기 (L3)">L3</div>
+
+              <div class="dpad">
+                <span class="btn-circle up jc-btn" data-k="UP" title="방향 버튼 위 (UP)">▲</span>
+                <span class="btn-circle down jc-btn" data-k="DOWN" title="방향 버튼 아래 (DOWN)">▼</span>
+                <span class="btn-circle left-key jc-btn" data-k="LEFT" title="방향 버튼 왼쪽 (LEFT)">◀</span>
+                <span class="btn-circle right-key jc-btn" data-k="RIGHT" title="방향 버튼 오른쪽 (RIGHT)">▶</span>
+              </div>
+
+              <div class="capture jc-btn" data-k="CAPTURE" title="캡처 버튼 (CAPTURE)"></div>
+            </div>
+            <div class="text-center text-xs font-bold text-[var(--muted-foreground)] mt-1.5">Joy-Con (L)</div>
+          </div>
+
+          <!-- RIGHT JOYCON (Joy-Con R) -->
+          <div class="joycon-unit right-unit">
+            <div class="zr-zl-trigger jc-btn" data-k="ZR" title="ZR 버튼 (ZR)">ZR</div>
+            <div class="shoulder jc-btn" data-k="R" title="R 버튼 (R)">R</div>
+
+            <div class="joycon right">
+              <div class="rail-bar">
+                <div class="rail-btn jc-btn" data-k="RSR" title="우측 SR 버튼 (RSR: 정밀+자이로)"></div>
+                <div class="rail-center">
+                  <div class="player-leds" title="플레이어 LED"><i class="on"></i><i></i><i></i><i></i></div>
+                  <div class="sync-btn" title="SYNC 버튼"></div>
+                </div>
+                <div class="rail-btn jc-btn" data-k="RSL" title="우측 SL 버튼 (RSL: 단독 탭/조합키)"></div>
+              </div>
+
+              <div class="plus jc-btn" data-k="+" title="+ 버튼 (+)"></div>
+
+              <div class="abxy">
+                <span class="btn-circle x jc-btn" data-k="N" title="X 버튼 (코드: N)">X</span>
+                <span class="btn-circle y jc-btn" data-k="W" title="Y 버튼 (코드: W)">Y</span>
+                <span class="btn-circle a jc-btn" data-k="E" title="A 버튼 (코드: E)">A</span>
+                <span class="btn-circle b jc-btn" data-k="S" title="B 버튼 (코드: S)">B</span>
+              </div>
+
+              <div class="stick jc-btn" data-k="R3" title="R 스틱 / 누르기 (R3)">R3</div>
+              <div class="home jc-btn" data-k="HOME" title="HOME 버튼 (HOME)"></div>
+            </div>
+            <div class="text-center text-xs font-bold text-[var(--muted-foreground)] mt-1.5">Joy-Con (R)</div>
+          </div>
+        </div>
+
+        <!-- Selected Button Quick Editor -->
+        <div id="quickEditBox" class="w-full mt-1 p-2.5 rounded-lg border border-[var(--border)] bg-[var(--card)]">
+          <div class="flex items-center justify-between mb-1.5">
+            <span id="selectedBtnTitle" class="text-xs font-bold text-[var(--foreground)]">선택됨: ZR (우측 하단 트리거)</span>
+            <button id="btnQuickCapture" class="px-2 py-0.5 rounded bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] text-xs font-medium hover:opacity-80">
+              ⌨️ 키보드 직접 입력
+            </button>
+          </div>
+          <select id="quickPresetSelect" class="w-full px-2 py-1.5 rounded border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs">
+          </select>
+        </div>
+      </div>
+
+      <!-- Right Column: Tabs & Full Editor -->
+      <div class="md:col-span-7 flex flex-col">
+        <!-- Tab Bar -->
+        <div class="flex border-b border-[var(--border)] bg-[var(--secondary)] px-2 pt-1.5 gap-1 overflow-x-auto">
+          <button data-tab="tab-r" class="tab-btn px-3 py-1.5 rounded-t-lg text-xs font-bold bg-[var(--card)] text-[var(--foreground)] border-t border-x border-[var(--border)]">
+            우측 조이콘 (R)
+          </button>
+          <button data-tab="tab-l" class="tab-btn px-3 py-1.5 rounded-t-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+            좌측 조이콘 (L)
+          </button>
+          <button data-tab="tab-chord" class="tab-btn px-3 py-1.5 rounded-t-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+            SL/SR 조합키
+          </button>
+          <button data-tab="tab-sens" class="tab-btn px-3 py-1.5 rounded-t-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+            스틱 & 자이로 감도
+          </button>
+          <button data-tab="tab-code" class="tab-btn px-3 py-1.5 rounded-t-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+            실시간 설정 코드
+          </button>
+        </div>
+
+        <!-- Tab Panels -->
+        <div class="p-3 h-96 overflow-y-auto" id="tabContentArea">
+        </div>
+
+        <!-- Status Bar -->
+        <div id="statusBar" class="px-3 py-2 border-t border-[var(--border)] bg-[var(--background)] text-xs text-[var(--muted-foreground)] flex items-center justify-between flex-wrap gap-2">
+          <span id="statusText">좌측 조이콘(L/R) 그림의 버튼을 클릭하거나 목록에서 기능을 변경하세요.</span>
+          <span id="fileNameBadge" class="font-mono text-xs px-2 py-0.5 rounded bg-[var(--card)] border border-[var(--border)]">JoyCon_Individual_Hybrid.txt</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Capture Modal -->
+  <div id="captureModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-xl p-5 max-w-sm w-full shadow-lg text-center">
+      <h3 class="font-bold text-sm mb-1" id="captureModalTitle">키보드 키 직접 입력</h3>
+      <p class="text-xs text-[var(--muted-foreground)] mb-4">배정할 키보드 키를 누르세요. (ESC: 취소)</p>
+      <div class="py-4 rounded-lg bg-[var(--background)] border border-[var(--border)] font-mono text-sm font-bold mb-3" id="captureKeyPreview">
+        키 입력 대기 중...
+      </div>
+      <button id="btnCancelCapture" class="px-4 py-1.5 rounded-lg border border-[var(--border)] text-xs font-semibold hover:opacity-80">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const PRESETS = [
+      { label: "마우스 좌클릭 / 드래그", code: "LMOUSE" },
+      { label: "마우스 우클릭", code: "RMOUSE" },
+      { label: "마우스 휠클릭 (길게: 스페이스바)", code: "MMOUSE SPACE" },
+      { label: "마우스 휠클릭 (단독)", code: "MMOUSE" },
+      { label: "마우스 휠 위로 연속 스크롤", code: "!SCROLLUP\\ SCROLLUP+" },
+      { label: "마우스 휠 아래로 연속 스크롤", code: "!SCROLLDOWN\\ SCROLLDOWN+" },
+      { label: "왼쪽 방향키 (길게: 뒤로가기)", code: "LEFT BMOUSE" },
+      { label: "오른쪽 방향키 (길게: 앞으로가기)", code: "RIGHT FMOUSE" },
+      { label: "브라우저 뒤로가기", code: "BMOUSE" },
+      { label: "브라우저 앞으로가기", code: "FMOUSE" },
+      { label: "엔터 (Enter)", code: "ENTER" },
+      { label: "스페이스바 (Space)", code: "SPACE" },
+      { label: "백스페이스 (Backspace)", code: "BACKSPACE" },
+      { label: "ESC (취소)", code: "ESC" },
+      { label: "ESC (길게: 작업 보기 Win+Tab)", code: "ESC' LWINDOWS_ !TAB_" },
+      { label: "탭 (Tab)", code: "TAB" },
+      { label: "현재 탭 닫기 (Ctrl + W)", code: "LCONTROL\\ !W\\" },
+      { label: "새 탭 열기 (Ctrl + T)", code: "LCONTROL\\ !T\\" },
+      { label: "복사 (Ctrl + C)", code: "LCONTROL\\ !C\\" },
+      { label: "붙여넣기 (Ctrl + V)", code: "LCONTROL\\ !V\\" },
+      { label: "실행 취소 (Ctrl + Z)", code: "LCONTROL\\ !Z\\" },
+      { label: "바탕화면 보기 (Win + D)", code: "LWINDOWS\\ !D\\" },
+      { label: "창 닫기 (Alt + F4)", code: "LALT\\ !F4\\" },
+      { label: "미디어 재생/일시정지 (조합키 겸용)", code: "PLAY_PAUSE NONE" },
+      { label: "볼륨 증가 (연속)", code: "!VOLUME_UP\\ VOLUME_UP+" },
+      { label: "볼륨 감소 (연속)", code: "!VOLUME_DOWN\\ VOLUME_DOWN+" },
+      { label: "음소거 (Mute)", code: "MUTE" },
+      { label: "자이로 토글 / 길게: 영점 재보정", code: "CALIBRATE CALIBRATE" },
+      { label: "비활성화 (NONE)", code: "NONE" }
+    ];
+
+    const DEFAULT_STATE = {
+      activeTab: "tab-r",
+      selectedKey: "ZR",
+      stickSens: 360,
+      slowSens: 140,
+      deadzone: 0.18,
+      gyroMode: 0,
+      minGyro: 7,
+      maxGyro: 15,
+      bindings: {
+        "ZR": "LMOUSE",
+        "R": "RMOUSE",
+        "R3": "MMOUSE SPACE",
+        "N": "!SCROLLUP\\ SCROLLUP+",
+        "S": "!SCROLLDOWN\\ SCROLLDOWN+",
+        "W": "LEFT BMOUSE",
+        "E": "RIGHT FMOUSE",
+        "+": "ESC' LWINDOWS_ !TAB_",
+        "+,+": "LCONTROL\\ !W\\",
+        "HOME": "CALIBRATE CALIBRATE",
+        "HOME,HOME": "LWINDOWS\\ !D\\",
+        "RSL": "PLAY_PAUSE NONE",
+        "ZL": "LMOUSE",
+        "L": "RMOUSE",
+        "L3": "MMOUSE SPACE",
+        "UP": "!SCROLLUP\\ SCROLLUP+",
+        "DOWN": "!SCROLLDOWN\\ SCROLLDOWN+",
+        "LEFT": "LEFT BMOUSE",
+        "RIGHT": "RIGHT FMOUSE",
+        "-": "ESC' LWINDOWS_ !TAB_",
+        "-,-": "LCONTROL\\ !W\\",
+        "CAPTURE": "CALIBRATE CALIBRATE",
+        "CAPTURE,CAPTURE": "LWINDOWS\\ !D\\",
+        "LSR": "PLAY_PAUSE NONE",
+        "RSL,N": "!VOLUME_UP\\ VOLUME_UP+",
+        "RSL,S": "!VOLUME_DOWN\\ VOLUME_DOWN+",
+        "RSL,W": "BMOUSE",
+        "RSL,E": "FMOUSE",
+        "RSL,ZR": "ENTER",
+        "RSL,R": "BACKSPACE",
+        "RSL,R3": "MUTE",
+        "LSR,UP": "!VOLUME_UP\\ VOLUME_UP+",
+        "LSR,DOWN": "!VOLUME_DOWN\\ VOLUME_DOWN+",
+        "LSR,LEFT": "BMOUSE",
+        "LSR,RIGHT": "FMOUSE",
+        "LSR,ZL": "ENTER",
+        "LSR,L": "BACKSPACE",
+        "LSR,L3": "MUTE"
+      }
+    };
+
+    const BUTTON_META = {
+      "ZR": "ZR 버튼 (Joy-Con R 후면 상단 트리거)",
+      "R": "R 버튼 (Joy-Con R 상단 숄더)",
+      "R3": "R 스틱 누르기 (R3)",
+      "N": "X 버튼 (상단 / 코드: N)",
+      "S": "B 버튼 (하단 / 코드: S)",
+      "W": "Y 버튼 (좌측 / 코드: W)",
+      "E": "A 버튼 (우측 / 코드: E)",
+      "+": "+ 버튼 (플러스 탭 / 길게)",
+      "+,+": "+,+ (플러스 더블탭)",
+      "HOME": "HOME 버튼 (홈 탭 / 길게)",
+      "HOME,HOME": "HOME,HOME (홈 더블탭)",
+      "RSL": "우측 SL 버튼 (레일 하단 / 조합키)",
+      "ZL": "ZL 버튼 (Joy-Con L 후면 상단 트리거)",
+      "L": "L 버튼 (Joy-Con L 상단 숄더)",
+      "L3": "L 스틱 누르기 (L3)",
+      "UP": "방향 버튼 ▲ (상단 / UP)",
+      "DOWN": "방향 버튼 ▼ (하단 / DOWN)",
+      "LEFT": "방향 버튼 ◀ (좌측 / LEFT)",
+      "RIGHT": "방향 버튼 ▶ (우측 / RIGHT)",
+      "-": "- 버튼 (마이너스 탭 / 길게)",
+      "-,-": "-,- (마이너스 더블탭)",
+      "CAPTURE": "캡처 버튼 (CAPTURE 탭 / 길게)",
+      "CAPTURE,CAPTURE": "CAPTURE,CAPTURE (캡처 더블탭)",
+      "LSR": "좌측 SR 버튼 (레일 하단 / 조합키)",
+      "RSL,N": "[우측] SL + X (상단)",
+      "RSL,S": "[우측] SL + B (하단)",
+      "RSL,W": "[우측] SL + Y (좌측)",
+      "RSL,E": "[우측] SL + A (우측)",
+      "RSL,ZR": "[우측] SL + ZR",
+      "RSL,R": "[우측] SL + R",
+      "RSL,R3": "[우측] SL + R3",
+      "LSR,UP": "[좌측] SR + 방향키 ▲",
+      "LSR,DOWN": "[좌측] SR + 방향키 ▼",
+      "LSR,LEFT": "[좌측] SR + 방향키 ◀",
+      "LSR,RIGHT": "[좌측] SR + 방향키 ▶",
+      "LSR,ZL": "[좌측] SR + ZL",
+      "LSR,L": "[좌측] SR + L",
+      "LSR,L3": "[좌측] SR + L3"
+    };
+
+    const TAB_GROUPS = {
+      "tab-r": ["ZR", "R", "R3", "N", "S", "W", "E", "+", "+,+", "HOME", "HOME,HOME", "RSL"],
+      "tab-l": ["ZL", "L", "L3", "UP", "DOWN", "LEFT", "RIGHT", "-", "-,-", "CAPTURE", "CAPTURE,CAPTURE", "LSR"],
+      "tab-chord": ["RSL,N", "RSL,S", "RSL,W", "RSL,E", "RSL,ZR", "RSL,R", "RSL,R3", "LSR,UP", "LSR,DOWN", "LSR,LEFT", "LSR,RIGHT", "LSR,ZL", "LSR,L", "LSR,L3"]
+    };
+
+    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    let captureTargetKey = null;
+    let currentFileHandle = null;
+
+    function parseConfigText(text) {
+      let baseMinGyro = 0;
+      let holdMinGyro = 7;
+      let holdMaxGyro = 15;
+      const lines = text.split(/\r?\n/);
+
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line || line.startsWith("#")) continue;
+        const eqIdx = line.indexOf("=");
+        if (eqIdx <= 0) continue;
+        const key = line.slice(0, eqIdx).trim();
+        const val = line.slice(eqIdx + 1).trim();
+
+        if (key === "STICK_SENS") state.stickSens = parseFloat(val) || 360;
+        else if (key === "RSR,STICK_SENS" || key === "LSL,STICK_SENS") state.slowSens = parseFloat(val) || 140;
+        else if (key === "STICK_DEADZONE_INNER") state.deadzone = parseFloat(val) || 0.18;
+        else if (key === "MIN_GYRO_SENS") baseMinGyro = parseFloat(val) || 0;
+        else if (key === "RSR,MIN_GYRO_SENS" || key === "LSL,MIN_GYRO_SENS") holdMinGyro = parseFloat(val) || 0;
+        else if (key === "RSR,MAX_GYRO_SENS" || key === "LSL,MAX_GYRO_SENS") holdMaxGyro = parseFloat(val) || 0;
+        else if (Object.prototype.hasOwnProperty.call(state.bindings, key)) {
+          state.bindings[key] = val;
+        }
+      }
+
+      if (baseMinGyro > 0) {
+        state.gyroMode = 1;
+        state.minGyro = baseMinGyro;
+      } else if (holdMinGyro > 0) {
+        state.gyroMode = 0;
+        state.minGyro = holdMinGyro;
+        state.maxGyro = holdMaxGyro > 0 ? holdMaxGyro : 15;
+      } else {
+        state.gyroMode = 2;
+      }
+    }
+
+    function updateJoyConHighlight() {
+      document.getElementById("activeCodeBadge").textContent = "선택 코드: " + state.selectedKey;
+      document.querySelectorAll(".jc-btn").forEach(el => {
+        const k = el.getAttribute("data-k");
+        el.classList.toggle("active", k === state.selectedKey);
+      });
+    }
+
+    function renderQuickEditor() {
+      const k = state.selectedKey;
+      document.getElementById("selectedBtnTitle").textContent = "선택됨: " + (BUTTON_META[k] || k);
+      const sel = document.getElementById("quickPresetSelect");
+      const curVal = state.bindings[k] || "NONE";
+
+      sel.innerHTML = PRESETS.map(p =>
+        `<option value="${p.code.replace(/"/g, '&quot;')}" ${p.code === curVal ? "selected" : ""}>${p.label} [${p.code}]</option>`
+      ).join("");
+
+      if (!PRESETS.some(p => p.code === curVal)) {
+        sel.innerHTML += `<option value="${curVal.replace(/"/g, '&quot;')}" selected>직접 지정 [${curVal}]</option>`;
+      }
+    }
+
+    function generateConfigText() {
+      const baseMin = state.gyroMode === 1 ? state.minGyro : 0;
+      const baseMax = state.gyroMode === 1 ? state.maxGyro : 0;
+      const holdMin = state.gyroMode === 2 ? 0 : state.minGyro;
+      const holdMax = state.gyroMode === 2 ? 0 : state.maxGyro;
+      const b = state.bindings;
+
+      return [
+        "# =============================================================================",
+        "# [Nintendo Switch 1 Left / Right Joy-Con] Individual Hybrid Mouse Config",
+        "# Generated by 조이콘_버튼_커스텀_GUI.html",
+        "# =============================================================================",
+        "RESET_MAPPINGS",
+        "AUTOLOAD = OFF",
+        "AUTO_CALIBRATE_GYRO = ON",
+        "",
+        "REAL_WORLD_CALIBRATION = 5.3333",
+        "IN_GAME_SENS = 1",
+        "COUNTER_OS_MOUSE_SPEED",
+        "",
+        "GYRO_SPACE = PLAYER_TURN",
+        `MIN_GYRO_SENS = ${baseMin}`,
+        `MAX_GYRO_SENS = ${baseMax}`,
+        "MIN_GYRO_THRESHOLD = 5",
+        "MAX_GYRO_THRESHOLD = 75",
+        "GYRO_SMOOTH_THRESHOLD = 5",
+        "GYRO_CUTOFF_RECOVERY = 5",
+        "",
+        "LEFT_STICK_MODE = AIM",
+        "RIGHT_STICK_MODE = AIM",
+        `STICK_SENS = ${state.stickSens}`,
+        "STICK_POWER = 1.5",
+        "STICK_ACCELERATION_RATE = 1.2",
+        "STICK_ACCELERATION_CAP = 2.5",
+        `STICK_DEADZONE_INNER = ${Number(state.deadzone).toFixed(2)}`,
+        "STICK_DEADZONE_OUTER = 0.10",
+        "",
+        `ZL = ${b["ZL"]}`,
+        `ZR = ${b["ZR"]}`,
+        `L  = ${b["L"]}`,
+        `R  = ${b["R"]}`,
+        `L3 = ${b["L3"]}`,
+        `R3 = ${b["R3"]}`,
+        "",
+        `UP    = ${b["UP"]}`,
+        `DOWN  = ${b["DOWN"]}`,
+        `LEFT  = ${b["LEFT"]}`,
+        `RIGHT = ${b["RIGHT"]}`,
+        `N     = ${b["N"]}`,
+        `S     = ${b["S"]}`,
+        `W     = ${b["W"]}`,
+        `E     = ${b["E"]}`,
+        "",
+        `LSL,STICK_SENS = ${state.slowSens}`,
+        `LSL,MIN_GYRO_SENS = ${holdMin}`,
+        `LSL,MAX_GYRO_SENS = ${holdMax}`,
+        `RSR,STICK_SENS = ${state.slowSens}`,
+        `RSR,MIN_GYRO_SENS = ${holdMin}`,
+        `RSR,MAX_GYRO_SENS = ${holdMax}`,
+        "",
+        `LSR = ${b["LSR"]}`,
+        `LSR,UP    = ${b["LSR,UP"]}`,
+        `LSR,DOWN  = ${b["LSR,DOWN"]}`,
+        `LSR,LEFT  = ${b["LSR,LEFT"]}`,
+        `LSR,RIGHT = ${b["LSR,RIGHT"]}`,
+        `LSR,ZL    = ${b["LSR,ZL"]}`,
+        `LSR,L     = ${b["LSR,L"]}`,
+        `LSR,L3    = ${b["LSR,L3"]}`,
+        "",
+        `RSL = ${b["RSL"]}`,
+        `RSL,N     = ${b["RSL,N"]}`,
+        `RSL,S     = ${b["RSL,S"]}`,
+        `RSL,W     = ${b["RSL,W"]}`,
+        `RSL,E     = ${b["RSL,E"]}`,
+        `RSL,ZR    = ${b["RSL,ZR"]}`,
+        `RSL,R     = ${b["RSL,R"]}`,
+        `RSL,R3    = ${b["RSL,R3"]}`,
+        "",
+        `-   = ${b["-"]}`,
+        `-,- = ${b["-,-"]}`,
+        `+   = ${b["+"]}`,
+        `+,+ = ${b["+,+"]}`,
+        `CAPTURE         = ${b["CAPTURE"]}`,
+        `CAPTURE,CAPTURE = ${b["CAPTURE,CAPTURE"]}`,
+        `HOME            = ${b["HOME"]}`,
+        `HOME,HOME       = ${b["HOME,HOME"]}`
+      ].join("\r\n");
+    }
+
+    function renderTabContent() {
+      const area = document.getElementById("tabContentArea");
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        const isAct = btn.getAttribute("data-tab") === state.activeTab;
+        btn.className = isAct
+          ? "tab-btn px-3 py-1.5 rounded-t-lg text-xs font-bold bg-[var(--card)] text-[var(--foreground)] border-t border-x border-[var(--border)]"
+          : "tab-btn px-3 py-1.5 rounded-t-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]";
+      });
+
+      if (state.activeTab === "tab-r" || state.activeTab === "tab-l" || state.activeTab === "tab-chord") {
+        const keys = TAB_GROUPS[state.activeTab];
+        area.innerHTML = `<div class="space-y-1.5">` + keys.map(k => {
+          const curVal = state.bindings[k] || "NONE";
+          const isSelected = state.selectedKey === k;
+          let optionsHtml = PRESETS.map(p =>
+            `<option value="${p.code.replace(/"/g, '&quot;')}" ${p.code === curVal ? "selected" : ""}>${p.label} [${p.code}]</option>`
+          ).join("");
+          if (!PRESETS.some(p => p.code === curVal)) {
+            optionsHtml += `<option value="${curVal.replace(/"/g, '&quot;')}" selected>직접 지정 [${curVal}]</option>`;
+          }
+          return `
+            <div class="flex items-center justify-between gap-2 p-1.5 rounded-lg border ${
+              isSelected ? "border-[var(--primary)] bg-[var(--secondary)]" : "border-[var(--border)] bg-[var(--background)]"
+            }">
+              <span class="text-xs font-semibold w-48 truncate" title="${BUTTON_META[k]}">${BUTTON_META[k]}</span>
+              <select data-row-select="${k}" class="flex-1 px-2 py-1 rounded border border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] text-xs">
+                ${optionsHtml}
+              </select>
+              <button data-row-cap="${k}" class="px-2 py-1 rounded bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] text-xs hover:opacity-80">
+                키 입력
+              </button>
+            </div>
+          `;
+        }).join("") + `</div>`;
+
+        area.querySelectorAll("select[data-row-select]").forEach(sel => {
+          sel.addEventListener("change", () => {
+            const k = sel.getAttribute("data-row-select");
+            state.bindings[k] = sel.value;
+            state.selectedKey = k;
+            document.getElementById("statusText").textContent = `${BUTTON_META[k]} → ${sel.value} 로 변경됨`;
+            renderAll();
+          });
+        });
+
+        area.querySelectorAll("button[data-row-cap]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            openCaptureModal(btn.getAttribute("data-row-cap"));
+          });
+        });
+      } else if (state.activeTab === "tab-sens") {
+        area.innerHTML = `
+          <div class="space-y-4 p-1">
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)] space-y-2.5">
+              <div class="text-xs font-bold">1. 아날로그 스틱 마우스 속도 & 데드존 (L 스틱 / R 스틱)</div>
+              <div class="flex items-center justify-between gap-3">
+                <label class="text-xs text-[var(--muted-foreground)]">기본 스틱 속도 (STICK_SENS)</label>
+                <div class="flex items-center gap-2">
+                  <input id="rngStickSens" type="range" min="80" max="1000" step="20" value="${state.stickSens}" class="w-36" />
+                  <span id="valStickSens" class="text-xs font-mono font-bold w-10 text-right">${state.stickSens}</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <label class="text-xs text-[var(--muted-foreground)]">우측 SR(RSR) / 좌측 SL(LSL) 정밀 모드 속도</label>
+                <div class="flex items-center gap-2">
+                  <input id="rngSlowSens" type="range" min="40" max="500" step="10" value="${state.slowSens}" class="w-36" />
+                  <span id="valSlowSens" class="text-xs font-mono font-bold w-10 text-right">${state.slowSens}</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <label class="text-xs text-[var(--muted-foreground)]">스틱 중앙 데드존 (DEADZONE)</label>
+                <div class="flex items-center gap-2">
+                  <input id="rngDeadzone" type="range" min="0.05" max="0.40" step="0.01" value="${state.deadzone}" class="w-36" />
+                  <span id="valDeadzone" class="text-xs font-mono font-bold w-10 text-right">${Number(state.deadzone).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)] space-y-2.5">
+              <div class="text-xs font-bold">2. 자이로(모션) 에어마우스 활성화 방식 (우측 RSR / 좌측 LSL)</div>
+              <select id="selGyroMode" class="w-full px-2.5 py-1.5 rounded border border-[var(--border)] bg-[var(--card)] text-xs">
+                <option value="0" ${state.gyroMode === 0 ? "selected" : ""}>측면 SR(우) / SL(좌) 누르는 동안만 자이로 켜기 (포인터 고정 추천)</option>
+                <option value="1" ${state.gyroMode === 1 ? "selected" : ""}>항상 자이로 켜기 (상시 에어마우스 + 스틱 동시 사용)</option>
+                <option value="2" ${state.gyroMode === 2 ? "selected" : ""}>자이로 완전히 끄기 (아날로그 스틱 전용)</option>
+              </select>
+              <div class="flex items-center justify-between gap-3">
+                <label class="text-xs text-[var(--muted-foreground)]">자이로 최소 감도 (MIN_GYRO_SENS)</label>
+                <div class="flex items-center gap-2">
+                  <input id="rngMinGyro" type="range" min="1" max="30" step="1" value="${state.minGyro}" class="w-36" />
+                  <span id="valMinGyro" class="text-xs font-mono font-bold w-10 text-right">${state.minGyro}</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <label class="text-xs text-[var(--muted-foreground)]">자이로 최대 감도 (MAX_GYRO_SENS)</label>
+                <div class="flex items-center gap-2">
+                  <input id="rngMaxGyro" type="range" min="2" max="50" step="1" value="${state.maxGyro}" class="w-36" />
+                  <span id="valMaxGyro" class="text-xs font-mono font-bold w-10 text-right">${state.maxGyro}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("rngStickSens").addEventListener("input", e => {
+          state.stickSens = Number(e.target.value);
+          document.getElementById("valStickSens").textContent = state.stickSens;
+        });
+        document.getElementById("rngSlowSens").addEventListener("input", e => {
+          state.slowSens = Number(e.target.value);
+          document.getElementById("valSlowSens").textContent = state.slowSens;
+        });
+        document.getElementById("rngDeadzone").addEventListener("input", e => {
+          state.deadzone = Number(e.target.value);
+          document.getElementById("valDeadzone").textContent = state.deadzone.toFixed(2);
+        });
+        document.getElementById("selGyroMode").addEventListener("change", e => {
+          state.gyroMode = Number(e.target.value);
+        });
+        document.getElementById("rngMinGyro").addEventListener("input", e => {
+          state.minGyro = Number(e.target.value);
+          document.getElementById("valMinGyro").textContent = state.minGyro;
+        });
+        document.getElementById("rngMaxGyro").addEventListener("input", e => {
+          state.maxGyro = Number(e.target.value);
+          document.getElementById("valMaxGyro").textContent = state.maxGyro;
+        });
+      } else if (state.activeTab === "tab-code") {
+        area.innerHTML = `
+          <textarea readonly class="w-full h-full p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] font-mono text-xs leading-relaxed resize-none">${generateConfigText()}</textarea>
+        `;
+      }
+    }
+
+    // Bind clicks on the realistic Joy-Con (L) / (R) CSS buttons
+    document.querySelectorAll(".jc-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const k = btn.getAttribute("data-k");
+        if (k === "RSR" || k === "LSL") {
+          state.activeTab = "tab-sens";
+          document.getElementById("statusText").textContent = `${k} 버튼은 [스틱 & 자이로 감도] 탭에서 정밀 모드 및 자이로 활성화를 담당합니다.`;
+          renderAll();
+          return;
+        }
+        state.selectedKey = k;
+        if (TAB_GROUPS["tab-r"].includes(k)) state.activeTab = "tab-r";
+        else if (TAB_GROUPS["tab-l"].includes(k)) state.activeTab = "tab-l";
+        document.getElementById("statusText").textContent = `선택된 물리 버튼: ${BUTTON_META[k] || k}`;
+        renderAll();
+      });
+    });
+
+    function openCaptureModal(key) {
+      captureTargetKey = key;
+      document.getElementById("captureModalTitle").textContent = "키 입력 대기 - " + (BUTTON_META[key] || key);
+      document.getElementById("captureKeyPreview").textContent = "키 입력 대기 중...";
+      document.getElementById("captureModal").classList.remove("hidden");
+    }
+
+    function mapDomKeyToJsm(e) {
+      const k = e.key;
+      if (/^[a-zA-Z0-9]$/.test(k)) return k.toUpperCase();
+      if (/^F([1-9]|1[0-2])$/.test(k)) return k.toUpperCase();
+      const map = {
+        "Enter": "ENTER",
+        " ": "SPACE",
+        "Backspace": "BACKSPACE",
+        "Tab": "TAB",
+        "ArrowUp": "UP",
+        "ArrowDown": "DOWN",
+        "ArrowLeft": "LEFT",
+        "ArrowRight": "RIGHT",
+        "PageUp": "PAGEUP",
+        "PageDown": "PAGEDOWN",
+        "Home": "HOME",
+        "End": "END",
+        "Insert": "INSERT",
+        "Delete": "DELETE",
+        "Shift": "LSHIFT",
+        "Control": "LCONTROL",
+        "Alt": "LALT",
+        "Meta": "LWINDOWS"
+      };
+      return map[k] || null;
+    }
+
+    window.addEventListener("keydown", e => {
+      if (!captureTargetKey) return;
+      e.preventDefault();
+      if (e.key === "Escape") {
+        captureTargetKey = null;
+        document.getElementById("captureModal").classList.add("hidden");
+        return;
+      }
+      const mapped = mapDomKeyToJsm(e);
+      if (mapped) {
+        state.bindings[captureTargetKey] = mapped;
+        state.selectedKey = captureTargetKey;
+        document.getElementById("statusText").textContent = `${BUTTON_META[captureTargetKey]} → ${mapped} 키로 지정됨`;
+        captureTargetKey = null;
+        document.getElementById("captureModal").classList.add("hidden");
+        renderAll();
+      }
+    });
+
+    document.getElementById("btnCancelCapture").addEventListener("click", () => {
+      captureTargetKey = null;
+      document.getElementById("captureModal").classList.add("hidden");
+    });
+
+    document.getElementById("quickPresetSelect").addEventListener("change", e => {
+      state.bindings[state.selectedKey] = e.target.value;
+      document.getElementById("statusText").textContent = `${BUTTON_META[state.selectedKey]} → ${e.target.value} 로 변경됨`;
+      renderAll();
+    });
+
+    document.getElementById("btnQuickCapture").addEventListener("click", () => {
+      openCaptureModal(state.selectedKey);
+    });
+
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.activeTab = btn.getAttribute("data-tab");
+        renderTabContent();
+      });
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      document.getElementById("statusText").textContent = "기본값으로 초기화되었습니다.";
+      renderAll();
+    });
+
+    document.getElementById("btnCopyConfig").addEventListener("click", () => {
+      const txt = generateConfigText();
+      navigator.clipboard.writeText(txt).then(() => {
+        document.getElementById("statusText").textContent = "✅ 클립보드에 설정 코드가 복사되었습니다!";
+      });
+    });
+
+    document.getElementById("btnOpenFile").addEventListener("click", async () => {
+      if (window.showOpenFilePicker) {
+        try {
+          const [handle] = await window.showOpenFilePicker({
+            types: [{ description: "JoyShockMapper Config", accept: { "text/plain": [".txt"] } }]
+          });
+          currentFileHandle = handle;
+          const file = await handle.getFile();
+          const text = await file.text();
+          parseConfigText(text);
+          document.getElementById("fileNameBadge").textContent = file.name;
+          document.getElementById("statusText").textContent = `📂 [${file.name}] 설정을 불러왔습니다.`;
+          renderAll();
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+        }
+      }
+      document.getElementById("fileInputFallback").click();
+    });
+
+    document.getElementById("fileInputFallback").addEventListener("change", async e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const text = await file.text();
+      parseConfigText(text);
+      document.getElementById("fileNameBadge").textContent = file.name;
+      document.getElementById("statusText").textContent = `📂 [${file.name}] 설정을 불러왔습니다.`;
+      renderAll();
+    });
+
+    document.getElementById("btnSaveFile").addEventListener("click", async () => {
+      const content = generateConfigText();
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = currentFileHandle || await window.showSaveFilePicker({
+            suggestedName: "JoyCon_Individual_Hybrid.txt",
+            types: [{ description: "JoyShockMapper Config", accept: { "text/plain": [".txt"] } }]
+          });
+          currentFileHandle = handle;
+          const writable = await handle.createWritable();
+          await writable.write(content);
+          await writable.close();
+          document.getElementById("fileNameBadge").textContent = handle.name;
+          document.getElementById("statusText").textContent = `💾 [${handle.name}] 파일에 성공적으로 저장되었습니다!`;
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+        }
+      }
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "JoyCon_Individual_Hybrid.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      document.getElementById("statusText").textContent = "💾 JoyCon_Individual_Hybrid.txt 파일 다운로드가 시작되었습니다.";
+    });
+
+    function renderAll() {
+      updateJoyConHighlight();
+      renderQuickEditor();
+      renderTabContent();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>

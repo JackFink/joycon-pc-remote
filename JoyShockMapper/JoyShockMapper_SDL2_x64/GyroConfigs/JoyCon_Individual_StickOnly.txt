@@ -1,0 +1,8 @@
+# [Profile 3] Switch 1 Left/Right Joy-Con Individual (Stick-Only Mouse, Gyro OFF)
+GyroConfigs/JoyCon_Individual_Hybrid.txt
+MIN_GYRO_SENS = 0
+MAX_GYRO_SENS = 0
+LSL,MIN_GYRO_SENS = 0
+LSL,MAX_GYRO_SENS = 0
+RSR,MIN_GYRO_SENS = 0
+RSR,MAX_GYRO_SENS = 0
