@@ -1,5 +1,3 @@
 @echo off
-cd /d "%~dp0JoyShockMapper\JoyShockMapper_SDL2_x64"
-taskkill /f /im JoyShockMapper.exe >nul 2>&1 && timeout /t 1 /nobreak >nul
-echo GyroConfigs/JoyCon_Individual_StickOnly.txt> "OnStartup.txt"
-start "" "JoyShockMapper.exe"
+cd /d "%~dp0"
+start "" "%~dp0조이콘_버튼_커스텀_GUI.exe" --engine "JoyCon_Individual_StickOnly.txt"

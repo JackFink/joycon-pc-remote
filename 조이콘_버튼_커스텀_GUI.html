@@ -374,16 +374,40 @@
       <div class="flex items-center flex-wrap gap-1.5">
         <input id="fileInputFallback" type="file" accept=".txt" class="hidden" />
         <button id="btnOpenFile" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
-          📂 설정 파일 열기 (.txt)
+          📂 설정 열기
         </button>
         <button id="btnReset" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
-          ↺ 기본값 초기화
+          ↺ 초기화
         </button>
         <button id="btnCopyConfig" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
           📋 코드 복사
         </button>
-        <button id="btnSaveFile" class="px-3.5 py-1.5 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-bold hover:opacity-90 transition shadow">
-          💾 설정 파일 저장 (.txt)
+        <button id="btnSaveFile" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] text-xs font-semibold hover:opacity-85 transition">
+          💾 파일로만 저장
+        </button>
+      </div>
+    </div>
+
+    <!-- Engine Execution & Mode Launcher Bar -->
+    <div class="bg-[var(--background)] border-b border-[var(--border)] px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span id="engineStatusBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[var(--secondary)] text-[var(--foreground)] border border-[var(--border)]">
+          <span id="engineStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+          <span id="engineStatusText">조이콘 마우스 실행 제어</span>
+        </span>
+      </div>
+      <div class="flex items-center flex-wrap gap-1.5">
+        <button id="btnRunHybrid" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-xs font-extrabold hover:bg-emerald-400 transition shadow">
+          🚀 저장 및 마우스 즉시 실행 (기본 하이브리드)
+        </button>
+        <button id="btnRunGyroScroll" class="px-3 py-1.5 rounded-lg bg-[var(--primary)] text-[var(--primary-foreground)] text-xs font-bold hover:opacity-90 transition">
+          🎯 모드2 실행 (자이로+스틱스크롤)
+        </button>
+        <button id="btnRunStickOnly" class="px-3 py-1.5 rounded-lg bg-[var(--secondary)] text-[var(--foreground)] border border-[var(--border)] text-xs font-bold hover:opacity-85 transition">
+          🕹️ 모드3 실행 (스틱전용)
+        </button>
+        <button id="btnStopJsm" class="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold hover:bg-rose-500 transition">
+          ⏹ 마우스 종료
         </button>
       </div>
     </div>
@@ -436,12 +460,12 @@
 
             <div class="joycon right">
               <div class="rail-bar">
-                <div class="rail-btn jc-btn" data-k="RSR" title="우측 SR 버튼 (RSR: 정밀+자이로)"></div>
+                <div class="rail-btn jc-btn" data-k="RSR" title="우측 SR 버튼 (RSR: 단독 탭/조합키)"></div>
                 <div class="rail-center">
                   <div class="player-leds" title="플레이어 LED"><i class="on"></i><i></i><i></i><i></i></div>
                   <div class="sync-btn" title="SYNC 버튼"></div>
                 </div>
-                <div class="rail-btn jc-btn" data-k="RSL" title="우측 SL 버튼 (RSL: 단독 탭/조합키)"></div>
+                <div class="rail-btn jc-btn" data-k="RSL" title="우측 SL 버튼 (RSL: 누르는 동안 자이로+정밀)"></div>
               </div>
 
               <div class="plus jc-btn" data-k="+" title="+ 버튼 (+)"></div>
@@ -550,7 +574,8 @@
       { label: "볼륨 증가 (연속)", code: "!VOLUME_UP\\ VOLUME_UP+" },
       { label: "볼륨 감소 (연속)", code: "!VOLUME_DOWN\\ VOLUME_DOWN+" },
       { label: "음소거 (Mute)", code: "MUTE" },
-      { label: "자이로 토글 / 길게: 영점 재보정", code: "CALIBRATE CALIBRATE" },
+      { label: "자이로 켜기/끄기 토글 (홈/캡처 기본)", code: "^GYRO_OFF" },
+      { label: "자이로 영점 수동 재보정 (누르는 동안)", code: "CALIBRATE" },
       { label: "비활성화 (NONE)", code: "NONE" }
     ];
 
@@ -560,9 +585,9 @@
       stickSens: 360,
       slowSens: 140,
       deadzone: 0.18,
-      gyroMode: 0,
-      minGyro: 7,
-      maxGyro: 15,
+      gyroMode: 1,
+      minGyro: 10,
+      maxGyro: 18,
       bindings: {
         "ZR": "LMOUSE",
         "R": "RMOUSE",
@@ -572,10 +597,8 @@
         "W": "LEFT BMOUSE",
         "E": "RIGHT FMOUSE",
         "+": "ESC' LWINDOWS_ !TAB_",
-        "+,+": "LCONTROL\\ !W\\",
-        "HOME": "CALIBRATE CALIBRATE",
-        "HOME,HOME": "LWINDOWS\\ !D\\",
-        "RSL": "PLAY_PAUSE NONE",
+        "HOME": "CALIBRATE",
+        "RSR": "PLAY_PAUSE NONE",
         "ZL": "LMOUSE",
         "L": "RMOUSE",
         "L3": "MMOUSE SPACE",
@@ -584,17 +607,15 @@
         "LEFT": "LEFT BMOUSE",
         "RIGHT": "RIGHT FMOUSE",
         "-": "ESC' LWINDOWS_ !TAB_",
-        "-,-": "LCONTROL\\ !W\\",
-        "CAPTURE": "CALIBRATE CALIBRATE",
-        "CAPTURE,CAPTURE": "LWINDOWS\\ !D\\",
+        "CAPTURE": "CALIBRATE",
         "LSR": "PLAY_PAUSE NONE",
-        "RSL,N": "!VOLUME_UP\\ VOLUME_UP+",
-        "RSL,S": "!VOLUME_DOWN\\ VOLUME_DOWN+",
-        "RSL,W": "BMOUSE",
-        "RSL,E": "FMOUSE",
-        "RSL,ZR": "ENTER",
-        "RSL,R": "BACKSPACE",
-        "RSL,R3": "MUTE",
+        "RSR,N": "!VOLUME_UP\\ VOLUME_UP+",
+        "RSR,S": "!VOLUME_DOWN\\ VOLUME_DOWN+",
+        "RSR,W": "BMOUSE",
+        "RSR,E": "FMOUSE",
+        "RSR,ZR": "ENTER",
+        "RSR,R": "BACKSPACE",
+        "RSR,R3": "MUTE",
         "LSR,UP": "!VOLUME_UP\\ VOLUME_UP+",
         "LSR,DOWN": "!VOLUME_DOWN\\ VOLUME_DOWN+",
         "LSR,LEFT": "BMOUSE",
@@ -613,11 +634,9 @@
       "S": "B 버튼 (하단 / 코드: S)",
       "W": "Y 버튼 (좌측 / 코드: W)",
       "E": "A 버튼 (우측 / 코드: E)",
-      "+": "+ 버튼 (플러스 탭 / 길게)",
-      "+,+": "+,+ (플러스 더블탭)",
-      "HOME": "HOME 버튼 (홈 탭 / 길게)",
-      "HOME,HOME": "HOME,HOME (홈 더블탭)",
-      "RSL": "우측 SL 버튼 (레일 하단 / 조합키)",
+      "+": "+ 버튼 (플러스)",
+      "HOME": "HOME 버튼 (홈)",
+      "RSR": "우측 SR 버튼 (레일 상단 / 조합키)",
       "ZL": "ZL 버튼 (Joy-Con L 후면 상단 트리거)",
       "L": "L 버튼 (Joy-Con L 상단 숄더)",
       "L3": "L 스틱 누르기 (L3)",
@@ -625,18 +644,16 @@
       "DOWN": "방향 버튼 ▼ (하단 / DOWN)",
       "LEFT": "방향 버튼 ◀ (좌측 / LEFT)",
       "RIGHT": "방향 버튼 ▶ (우측 / RIGHT)",
-      "-": "- 버튼 (마이너스 탭 / 길게)",
-      "-,-": "-,- (마이너스 더블탭)",
-      "CAPTURE": "캡처 버튼 (CAPTURE 탭 / 길게)",
-      "CAPTURE,CAPTURE": "CAPTURE,CAPTURE (캡처 더블탭)",
+      "-": "- 버튼 (마이너스)",
+      "CAPTURE": "캡처 버튼 (CAPTURE)",
       "LSR": "좌측 SR 버튼 (레일 하단 / 조합키)",
-      "RSL,N": "[우측] SL + X (상단)",
-      "RSL,S": "[우측] SL + B (하단)",
-      "RSL,W": "[우측] SL + Y (좌측)",
-      "RSL,E": "[우측] SL + A (우측)",
-      "RSL,ZR": "[우측] SL + ZR",
-      "RSL,R": "[우측] SL + R",
-      "RSL,R3": "[우측] SL + R3",
+      "RSR,N": "[우측] SR + X (상단)",
+      "RSR,S": "[우측] SR + B (하단)",
+      "RSR,W": "[우측] SR + Y (좌측)",
+      "RSR,E": "[우측] SR + A (우측)",
+      "RSR,ZR": "[우측] SR + ZR",
+      "RSR,R": "[우측] SR + R",
+      "RSR,R3": "[우측] SR + R3",
       "LSR,UP": "[좌측] SR + 방향키 ▲",
       "LSR,DOWN": "[좌측] SR + 방향키 ▼",
       "LSR,LEFT": "[좌측] SR + 방향키 ◀",
@@ -647,9 +664,9 @@
     };
 
     const TAB_GROUPS = {
-      "tab-r": ["ZR", "R", "R3", "N", "S", "W", "E", "+", "+,+", "HOME", "HOME,HOME", "RSL"],
-      "tab-l": ["ZL", "L", "L3", "UP", "DOWN", "LEFT", "RIGHT", "-", "-,-", "CAPTURE", "CAPTURE,CAPTURE", "LSR"],
-      "tab-chord": ["RSL,N", "RSL,S", "RSL,W", "RSL,E", "RSL,ZR", "RSL,R", "RSL,R3", "LSR,UP", "LSR,DOWN", "LSR,LEFT", "LSR,RIGHT", "LSR,ZL", "LSR,L", "LSR,L3"]
+      "tab-r": ["ZR", "R", "R3", "N", "S", "W", "E", "+", "HOME", "RSR"],
+      "tab-l": ["ZL", "L", "L3", "UP", "DOWN", "LEFT", "RIGHT", "-", "CAPTURE", "LSR"],
+      "tab-chord": ["RSR,N", "RSR,S", "RSR,W", "RSR,E", "RSR,ZR", "RSR,R", "RSR,R3", "LSR,UP", "LSR,DOWN", "LSR,LEFT", "LSR,RIGHT", "LSR,ZL", "LSR,L", "LSR,L3"]
     };
 
     let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
@@ -658,8 +675,10 @@
 
     function parseConfigText(text) {
       let baseMinGyro = 0;
-      let holdMinGyro = 7;
-      let holdMaxGyro = 15;
+      let baseMaxGyro = 0;
+      let holdMinGyro = 8;
+      let holdMaxGyro = 16;
+      let hasGyroOnSl = false;
       const lines = text.split(/\r?\n/);
 
       for (const raw of lines) {
@@ -668,26 +687,34 @@
         const eqIdx = line.indexOf("=");
         if (eqIdx <= 0) continue;
         const key = line.slice(0, eqIdx).trim();
-        const val = line.slice(eqIdx + 1).trim();
+        let val = line.slice(eqIdx + 1).trim();
 
         if (key === "STICK_SENS") state.stickSens = parseFloat(val) || 360;
-        else if (key === "RSR,STICK_SENS" || key === "LSL,STICK_SENS") state.slowSens = parseFloat(val) || 140;
+        else if (key === "RSL,STICK_SENS" || key === "LSL,STICK_SENS" || key === "RSR,STICK_SENS") state.slowSens = parseFloat(val) || 140;
         else if (key === "STICK_DEADZONE_INNER") state.deadzone = parseFloat(val) || 0.18;
+        else if (key === "GYRO_ON" && (val === "LSL" || val === "RSL")) hasGyroOnSl = true;
         else if (key === "MIN_GYRO_SENS") baseMinGyro = parseFloat(val) || 0;
-        else if (key === "RSR,MIN_GYRO_SENS" || key === "LSL,MIN_GYRO_SENS") holdMinGyro = parseFloat(val) || 0;
-        else if (key === "RSR,MAX_GYRO_SENS" || key === "LSL,MAX_GYRO_SENS") holdMaxGyro = parseFloat(val) || 0;
+        else if (key === "MAX_GYRO_SENS") baseMaxGyro = parseFloat(val) || 0;
+        else if (key === "RSL,MIN_GYRO_SENS" || key === "LSL,MIN_GYRO_SENS" || key === "RSR,MIN_GYRO_SENS") holdMinGyro = parseFloat(val) || 0;
+        else if (key === "RSL,MAX_GYRO_SENS" || key === "LSL,MAX_GYRO_SENS" || key === "RSR,MAX_GYRO_SENS") holdMaxGyro = parseFloat(val) || 0;
         else if (Object.prototype.hasOwnProperty.call(state.bindings, key)) {
+          if (val === "CALIBRATE CALIBRATE" || val === "^GYRO_OFF CALIBRATE") val = "^GYRO_OFF";
           state.bindings[key] = val;
         }
       }
 
-      if (baseMinGyro > 0) {
+      if (hasGyroOnSl && baseMinGyro > 0) {
         state.gyroMode = 1;
         state.minGyro = baseMinGyro;
-      } else if (holdMinGyro > 0) {
+        state.maxGyro = baseMaxGyro > 0 ? baseMaxGyro : 16;
+      } else if (baseMinGyro > 0) {
         state.gyroMode = 0;
+        state.minGyro = baseMinGyro;
+        state.maxGyro = baseMaxGyro > 0 ? baseMaxGyro : 16;
+      } else if (holdMinGyro > 0) {
+        state.gyroMode = 1;
         state.minGyro = holdMinGyro;
-        state.maxGyro = holdMaxGyro > 0 ? holdMaxGyro : 15;
+        state.maxGyro = holdMaxGyro > 0 ? holdMaxGyro : 16;
       } else {
         state.gyroMode = 2;
       }
@@ -717,13 +744,13 @@
     }
 
     function generateConfigText() {
-      const baseMin = state.gyroMode === 1 ? state.minGyro : 0;
-      const baseMax = state.gyroMode === 1 ? state.maxGyro : 0;
-      const holdMin = state.gyroMode === 2 ? 0 : state.minGyro;
-      const holdMax = state.gyroMode === 2 ? 0 : state.maxGyro;
+      const baseMin = state.gyroMode === 0 ? state.minGyro : 0;
+      const baseMax = state.gyroMode === 0 ? state.maxGyro : 0;
+      const holdMin = state.gyroMode === 1 ? state.minGyro : 0;
+      const holdMax = state.gyroMode === 1 ? state.maxGyro : 0;
       const b = state.bindings;
 
-      return [
+      const lines = [
         "# =============================================================================",
         "# [Nintendo Switch 1 Left / Right Joy-Con] Individual Hybrid Mouse Config",
         "# Generated by 조이콘_버튼_커스텀_GUI.html",
@@ -739,10 +766,10 @@
         "GYRO_SPACE = PLAYER_TURN",
         `MIN_GYRO_SENS = ${baseMin}`,
         `MAX_GYRO_SENS = ${baseMax}`,
-        "MIN_GYRO_THRESHOLD = 5",
-        "MAX_GYRO_THRESHOLD = 75",
-        "GYRO_SMOOTH_THRESHOLD = 5",
-        "GYRO_CUTOFF_RECOVERY = 5",
+        "MIN_GYRO_THRESHOLD = 0.5",
+        "MAX_GYRO_THRESHOLD = 60",
+        "GYRO_SMOOTH_THRESHOLD = 1.0",
+        "GYRO_CUTOFF_RECOVERY = 0",
         "",
         "LEFT_STICK_MODE = AIM",
         "RIGHT_STICK_MODE = AIM",
@@ -769,12 +796,16 @@
         `W     = ${b["W"]}`,
         `E     = ${b["E"]}`,
         "",
+        "LSL = NONE",
+        "RSL = NONE",
+        ...(state.gyroMode === 1 ? [
+          `LSL,MIN_GYRO_SENS = ${holdMin}`,
+          `LSL,MAX_GYRO_SENS = ${holdMax}`,
+          `RSL,MIN_GYRO_SENS = ${holdMin}`,
+          `RSL,MAX_GYRO_SENS = ${holdMax}`
+        ] : []),
         `LSL,STICK_SENS = ${state.slowSens}`,
-        `LSL,MIN_GYRO_SENS = ${holdMin}`,
-        `LSL,MAX_GYRO_SENS = ${holdMax}`,
-        `RSR,STICK_SENS = ${state.slowSens}`,
-        `RSR,MIN_GYRO_SENS = ${holdMin}`,
-        `RSR,MAX_GYRO_SENS = ${holdMax}`,
+        `RSL,STICK_SENS = ${state.slowSens}`,
         "",
         `LSR = ${b["LSR"]}`,
         `LSR,UP    = ${b["LSR,UP"]}`,
@@ -785,24 +816,21 @@
         `LSR,L     = ${b["LSR,L"]}`,
         `LSR,L3    = ${b["LSR,L3"]}`,
         "",
-        `RSL = ${b["RSL"]}`,
-        `RSL,N     = ${b["RSL,N"]}`,
-        `RSL,S     = ${b["RSL,S"]}`,
-        `RSL,W     = ${b["RSL,W"]}`,
-        `RSL,E     = ${b["RSL,E"]}`,
-        `RSL,ZR    = ${b["RSL,ZR"]}`,
-        `RSL,R     = ${b["RSL,R"]}`,
-        `RSL,R3    = ${b["RSL,R3"]}`,
+        `RSR = ${b["RSR"]}`,
+        `RSR,N     = ${b["RSR,N"]}`,
+        `RSR,S     = ${b["RSR,S"]}`,
+        `RSR,W     = ${b["RSR,W"]}`,
+        `RSR,E     = ${b["RSR,E"]}`,
+        `RSR,ZR    = ${b["RSR,ZR"]}`,
+        `RSR,R     = ${b["RSR,R"]}`,
+        `RSR,R3    = ${b["RSR,R3"]}`,
         "",
-        `-   = ${b["-"]}`,
-        `-,- = ${b["-,-"]}`,
-        `+   = ${b["+"]}`,
-        `+,+ = ${b["+,+"]}`,
-        `CAPTURE         = ${b["CAPTURE"]}`,
-        `CAPTURE,CAPTURE = ${b["CAPTURE,CAPTURE"]}`,
-        `HOME            = ${b["HOME"]}`,
-        `HOME,HOME       = ${b["HOME,HOME"]}`
-      ].join("\r\n");
+        `-       = ${b["-"]}`,
+        `+       = ${b["+"]}`,
+        `CAPTURE = ${b["CAPTURE"]}`,
+        `HOME    = ${b["HOME"]}`
+      ];
+      return lines.join("\r\n");
     }
 
     function renderTabContent() {
@@ -868,7 +896,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between gap-3">
-                <label class="text-xs text-[var(--muted-foreground)]">우측 SR(RSR) / 좌측 SL(LSL) 정밀 모드 속도</label>
+                <label class="text-xs text-[var(--muted-foreground)]">SL 버튼(우:RSL / 좌:LSL) 정밀 모드 속도</label>
                 <div class="flex items-center gap-2">
                   <input id="rngSlowSens" type="range" min="40" max="500" step="10" value="${state.slowSens}" class="w-36" />
                   <span id="valSlowSens" class="text-xs font-mono font-bold w-10 text-right">${state.slowSens}</span>
@@ -884,10 +912,10 @@
             </div>
 
             <div class="p-3 rounded-lg border border-[var(--border)] bg-[var(--background)] space-y-2.5">
-              <div class="text-xs font-bold">2. 자이로(모션) 에어마우스 활성화 방식 (우측 RSR / 좌측 LSL)</div>
+              <div class="text-xs font-bold">2. 자이로(모션) 에어마우스 활성화 방식 (SL 버튼: 우 RSL / 좌 LSL)</div>
               <select id="selGyroMode" class="w-full px-2.5 py-1.5 rounded border border-[var(--border)] bg-[var(--card)] text-xs">
-                <option value="0" ${state.gyroMode === 0 ? "selected" : ""}>측면 SR(우) / SL(좌) 누르는 동안만 자이로 켜기 (포인터 고정 추천)</option>
-                <option value="1" ${state.gyroMode === 1 ? "selected" : ""}>항상 자이로 켜기 (상시 에어마우스 + 스틱 동시 사용)</option>
+                <option value="0" ${state.gyroMode === 0 ? "selected" : ""}>항상 자이로 켜기 (상시 에어마우스 + SL 버튼 누르면 커서 고정/정밀모드)</option>
+                <option value="1" ${state.gyroMode === 1 ? "selected" : ""}>SL 버튼(우:RSL / 좌:LSL)을 누르고 있는 동안만 자이로 켜기 [기본 추천]</option>
                 <option value="2" ${state.gyroMode === 2 ? "selected" : ""}>자이로 완전히 끄기 (아날로그 스틱 전용)</option>
               </select>
               <div class="flex items-center justify-between gap-3">
@@ -942,9 +970,9 @@
     document.querySelectorAll(".jc-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const k = btn.getAttribute("data-k");
-        if (k === "RSR" || k === "LSL") {
+        if (k === "RSL" || k === "LSL") {
           state.activeTab = "tab-sens";
-          document.getElementById("statusText").textContent = `${k} 버튼은 [스틱 & 자이로 감도] 탭에서 정밀 모드 및 자이로 활성화를 담당합니다.`;
+          document.getElementById("statusText").textContent = `${k} (SL) 버튼은 [스틱 & 자이로 감도] 탭에서 누르는 동안 자이로 활성화 및 정밀 모드를 담당합니다.`;
           renderAll();
           return;
         }
@@ -1106,6 +1134,91 @@
       document.getElementById("statusText").textContent = "💾 JoyCon_Individual_Hybrid.txt 파일 다운로드가 시작되었습니다.";
     });
 
+    const BRIDGE_URL = "http://127.0.0.1:18970";
+
+    function updateEngineBadge(running, msg) {
+      const dot = document.getElementById("engineStatusDot");
+      const txt = document.getElementById("engineStatusText");
+      if (running) {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        txt.textContent = msg || "마우스 실행 중 (JoyShockMapper)";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-slate-400";
+        txt.textContent = msg || "대기 중 (실행 버튼을 누르세요)";
+      }
+    }
+
+    async function checkEngineStatus() {
+      try {
+        const res = await fetch(`${BRIDGE_URL}/api/status`);
+        if (res.ok) {
+          const data = await res.json();
+          updateEngineBadge(data.running);
+        }
+      } catch (e) {}
+    }
+
+    document.getElementById("btnRunHybrid").addEventListener("click", async () => {
+      const content = generateConfigText();
+      try {
+        const res = await fetch(`${BRIDGE_URL}/api/apply`, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: content
+        });
+        if (res.ok) {
+          updateEngineBadge(true, "모드1 (하이브리드) 실행 중");
+          document.getElementById("statusText").textContent = "🚀 설정을 저장하고 조이콘 마우스(기본 하이브리드 모드)를 즉시 실행했습니다!";
+          return;
+        }
+      } catch (e) {}
+      window.location.href = "joycon-remote://run/hybrid";
+      updateEngineBadge(true, "모드1 (하이브리드) 실행 요청됨");
+      document.getElementById("statusText").textContent = "🚀 조이콘 마우스(하이브리드 모드) 실행을 요청했습니다.";
+    });
+
+    document.getElementById("btnRunGyroScroll").addEventListener("click", async () => {
+      try {
+        const res = await fetch(`${BRIDGE_URL}/api/run?mode=gyroscroll`);
+        if (res.ok) {
+          updateEngineBadge(true, "모드2 (자이로+스틱스크롤) 실행 중");
+          document.getElementById("statusText").textContent = "🎯 모드2 (자이로 포인터 + 스틱 스크롤)로 조이콘 마우스를 실행했습니다!";
+          return;
+        }
+      } catch (e) {}
+      window.location.href = "joycon-remote://run/gyroscroll";
+      updateEngineBadge(true, "모드2 실행 요청됨");
+      document.getElementById("statusText").textContent = "🎯 모드2 (자이로 포인터 + 스틱 스크롤) 실행을 요청했습니다.";
+    });
+
+    document.getElementById("btnRunStickOnly").addEventListener("click", async () => {
+      try {
+        const res = await fetch(`${BRIDGE_URL}/api/run?mode=stickonly`);
+        if (res.ok) {
+          updateEngineBadge(true, "모드3 (스틱전용) 실행 중");
+          document.getElementById("statusText").textContent = "🕹️ 모드3 (아날로그 스틱 전용)으로 조이콘 마우스를 실행했습니다!";
+          return;
+        }
+      } catch (e) {}
+      window.location.href = "joycon-remote://run/stickonly";
+      updateEngineBadge(true, "모드3 실행 요청됨");
+      document.getElementById("statusText").textContent = "🕹️ 모드3 (스틱 전용) 실행을 요청했습니다.";
+    });
+
+    document.getElementById("btnStopJsm").addEventListener("click", async () => {
+      try {
+        const res = await fetch(`${BRIDGE_URL}/api/stop`);
+        if (res.ok) {
+          updateEngineBadge(false, "마우스 종료됨");
+          document.getElementById("statusText").textContent = "⏹ 실행 중인 조이콘 마우스(JoyShockMapper)를 종료했습니다.";
+          return;
+        }
+      } catch (e) {}
+      window.location.href = "joycon-remote://stop";
+      updateEngineBadge(false, "마우스 종료 요청됨");
+      document.getElementById("statusText").textContent = "⏹ 조이콘 마우스 종료를 요청했습니다.";
+    });
+
     function renderAll() {
       updateJoyConHighlight();
       renderQuickEditor();
@@ -1113,6 +1226,8 @@
     }
 
     renderAll();
+    checkEngineStatus();
+    setInterval(checkEngineStatus, 3000);
   </script>
 </body>
 </html>
